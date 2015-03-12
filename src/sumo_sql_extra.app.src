@@ -1,0 +1,9 @@
+{application, sumo_sql_extra,
+ [
+  {description, "SQL specific functionality for Sumo DB stores"},
+  {vsn, "0.0.0"},
+  {registered, []},
+  {applications, [kernel,
+                  stdlib]},
+  {env, []}
+ ]}.
