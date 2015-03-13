@@ -1,9 +1,13 @@
-{application, sumo_sql_extra,
- [
+{application, sumo_sql_extra, [
   {description, "SQL specific functionality for Sumo DB stores"},
-  {vsn, "0.0.0"},
-  {registered, []},
-  {applications, [kernel,
-                  stdlib]},
-  {env, []}
- ]}.
+	{vsn, "0.0.1"},
+	{id, "git"},
+	{modules, []},
+	{registered, []},
+	{applications, [
+		kernel,
+		stdlib
+	]},
+	{mod, {sumo_sql_extra_app, []}},
+	{env, []}
+]}.
