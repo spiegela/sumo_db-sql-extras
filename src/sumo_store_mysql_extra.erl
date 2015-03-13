@@ -24,7 +24,7 @@
 %%% FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 %%% IN THE SOFTWARE.
 
--module(sumo_sql_extra).
+-module(sumo_store_mysql_extra).
 
 -behaviour(sumo_store).
 

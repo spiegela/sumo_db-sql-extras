@@ -8,6 +8,5 @@
 		kernel,
 		stdlib
 	]},
-	{mod, {sumo_sql_extra_app, []}},
 	{env, []}
 ]}.
