@@ -28,7 +28,7 @@
 
 -export([all/0, init_per_suite/1, end_per_suite/1, init_per_testcase/2]).
 
--export([find_by_sql/1]).
+-export([find_by_sql_without_args/1, find_by_sql_with_args/1]).
 
 -define(EXCLUDED_FUNS, [module_info, all, test, init_per_suite,
                         init_per_testcase, end_per_suite, find_by_sort,
@@ -63,8 +63,11 @@ end_per_suite(Config) ->
 %%% Exported Tests Functions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-find_by_sql(_Config) ->
-  run_all_stores(fun find_by_sql_module/1).
+find_by_sql_without_args(_Config) ->
+  run_all_stores(fun find_by_sql_without_args_module/1).
+
+find_by_sql_with_args(_Config) ->
+  run_all_stores(fun find_by_sql_with_args_module/1).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Internal functions
@@ -81,12 +84,32 @@ init_store(Module) ->
   sumo:persist(Module, Module:new(<<"E">>, <<"A">>, 2)),
   sumo:persist(Module, Module:new(<<"F">>, <<"E">>, 1)).
 
-find_by_sql_module(Module) ->
-  6 = length(sumo_sql_extra:find_by_sql(Module)).
+find_by_sql_without_args_module(Module) ->
+  Pool = sumo_backend_mysql:get_pool(sumo_test_backend),
+  {ok, {docs, Docs}, _State} =
+    sumo_sql_extra:find_by_sql( [ "select * from ",
+                                  atom_to_list(Module),
+                                  " where name in (\"A\", \"B\")" ],
+                                Module,
+                                {state, Pool}
+                              ),
+  2 = length(Docs).
 
-%%% Helper
+find_by_sql_with_args_module(Module) ->
+  Pool = sumo_backend_mysql:get_pool(sumo_test_backend),
+  {ok, {docs, Docs}, _State} =
+    sumo_sql_extra:find_by_sql( [ "select * from ",
+                                  atom_to_list(Module),
+                                  " where last_name = ? or age = ?" ],
+                                ["D", 5],
+                                Module,
+                                {state, Pool}
+                              ),
+  3 = length(Docs).
 
--spec run_all_stores(fun()) -> ok.
+  %%% Helper
+
+  -spec run_all_stores(fun()) -> ok.
 run_all_stores(Fun) ->
   Modules = [sumo_test_people_mysql
             ],
